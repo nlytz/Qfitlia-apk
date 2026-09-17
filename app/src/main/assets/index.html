@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Qfitlia</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#075a94;
+}
+
+
+/* =========================================================
+   MAIN SCREEN
+========================================================= */
+
+#game{
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:700px;
+  overflow:hidden;
+
+  background:
+    radial-gradient(
+      circle at 55% 48%,
+      rgba(0,55,105,.20),
+      transparent 54%
+    ),
+    linear-gradient(
+      103deg,
+      rgba(0,119,190,.18) 0 13%,
+      transparent 13%
+    ),
+    #075a94;
+}
+
+
+/* =========================================================
+   02.PNG
+========================================================= */
+
+.legal-image{
+  position:absolute;
+  z-index:10;
+
+  left:28px;
+  bottom:24px;
+
+  width:720px;
+  max-width:67vw;
+
+  height:auto;
+  display:block;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   BALL AREA
+========================================================= */
+
+#ballArea{
+  position:absolute;
+  inset:0;
+
+  width:100%;
+  height:100%;
+
+  z-index:20;
+  overflow:hidden;
+}
+
+
+/* =========================================================
+   BALL
+========================================================= */
+
+.ball{
+  position:absolute;
+
+  padding:0;
+  margin:0;
+
+  border:0;
+  border-radius:50%;
+
+  cursor:pointer;
+
+  color:transparent !important;
+  font-size:0;
+
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
+
+  background:
+    radial-gradient(
+      circle at 22% 28%,
+      rgba(255,255,255,.72) 0,
+      rgba(255,255,255,.30) 6%,
+      transparent 19%
+    ),
+    radial-gradient(
+      circle at 78% 78%,
+      rgba(255,255,40,.90) 0,
+      rgba(255,255,20,.32) 11%,
+      transparent 27%
+    ),
+    #ffc70f;
+
+  box-shadow:
+    inset 5px 5px 0 rgba(255,255,255,.48),
+    inset -5px -5px 0 rgba(238,173,0,.30),
+    0 0 12px rgba(255,199,15,.22);
+
+  opacity:1;
+
+  transition:
+    opacity .35s ease,
+    filter .35s ease,
+    box-shadow .35s ease;
+
+  will-change:transform;
+}
+
+
+.ball::before{
+  content:"";
+
+  position:absolute;
+  inset:5px;
+
+  border-radius:50%;
+
+  border:3px solid rgba(255,255,255,.48);
+  border-right-color:rgba(255,255,255,.12);
+  border-bottom-color:rgba(255,255,0,.85);
+
+  pointer-events:none;
+}
+
+
+.ball::after{
+  content:none !important;
+  display:none !important;
+}
+
+
+.ball:not(.completed):hover{
+  filter:brightness(1.06);
+}
+
+
+/* =========================================================
+   COMPLETED BALL
+========================================================= */
+
+.ball.completed{
+  opacity:.25 !important;
+
+  filter:
+    saturate(.35)
+    brightness(.85);
+
+  cursor:default;
+  pointer-events:none;
+
+  box-shadow:
+    inset 5px 5px 0 rgba(255,255,255,.25),
+    inset -5px -5px 0 rgba(238,173,0,.15),
+    0 0 5px rgba(255,199,15,.10);
+}
+
+
+/* =========================================================
+   01.PNG
+========================================================= */
+
+.main-title{
+  position:absolute;
+  z-index:30;
+
+  top:225px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:820px;
+  max-width:82vw;
+
+  height:auto;
+  display:block;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   QFITLIA LOGO
+========================================================= */
+
+.qfitlia-logo{
+  position:absolute;
+  z-index:30;
+
+  top:38px;
+  left:42px;
+
+  width:350px;
+  max-width:38vw;
+
+  height:auto;
+  display:block;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   SANOFI LOGO
+========================================================= */
+
+.sanofi-logo{
+  position:absolute;
+  z-index:30;
+
+  right:40px;
+  bottom:28px;
+
+  width:210px;
+  max-width:23vw;
+
+  height:auto;
+  display:block;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   QUESTION 1 MODAL
+========================================================= */
+
+.image-modal{
+  position:fixed;
+  inset:0;
+
+  z-index:1500;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,35,67,.84);
+
+  opacity:0;
+  visibility:hidden;
+
+  transition:
+    opacity .25s ease,
+    visibility .25s ease;
+}
+
+
+.image-modal.active{
+  opacity:1;
+  visibility:visible;
+}
+
+
+/* =========================================================
+   QUESTION WRAPPER
+========================================================= */
+
+.image-modal-content{
+  position:relative;
+
+  display:inline-block;
+
+  width:auto;
+  height:auto;
+
+  max-width:92vw;
+  max-height:90vh;
+
+  /*
+     OPTICAL CENTERING
+
+     Desktop:
+     çok az sola + çok az aşağı
+  */
+
+  transform:translate(-1.5vw, 1vh);
+}
+
+
+/* =========================================================
+   03.PNG
+========================================================= */
+
+.question-image{
+  position:relative;
+  z-index:1;
+
+  display:block;
+
+  width:auto;
+  height:auto;
+
+  max-width:86vw;
+  max-height:84vh;
+
+  object-fit:contain;
+
+  pointer-events:none;
+  user-select:none;
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.question-overlay{
+  position:absolute;
+  z-index:10;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   HOTSPOTS
+========================================================= */
+
+.hotspot{
+  position:absolute;
+  z-index:20;
+
+  padding:0;
+  margin:0;
+
+  border:0;
+
+  background:transparent;
+
+  cursor:pointer;
+  outline:none;
+
+  pointer-events:auto;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+
+.hotspot:disabled{
+  cursor:default;
+}
+
+
+/* =========================================================
+   RESULT CIRCLE
+========================================================= */
+
+.result-circle{
+  position:absolute;
+  z-index:30;
+
+  border-radius:50%;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transform:translate(-50%,-50%) scale(.7);
+
+  transition:
+    opacity .18s ease,
+    transform .18s ease;
+}
+
+
+.result-circle.wrong{
+  opacity:1;
+
+  background:#df4646;
+
+  transform:translate(-50%,-50%) scale(1);
+}
+
+
+.result-circle.correct{
+  opacity:1;
+
+  background:#249b61;
+
+  transform:translate(-50%,-50%) scale(1);
+}
+
+
+/* =========================================================
+   BACK TO BALLS
+========================================================= */
+
+.image-back{
+  position:absolute;
+  z-index:40;
+
+  display:none;
+
+  padding:11px 22px;
+
+  border:0;
+  border-radius:30px;
+
+  background:#075a94;
+
+  color:#ffffff;
+
+  font-size:14px;
+  font-weight:700;
+
+  cursor:pointer;
+  pointer-events:auto;
+
+  white-space:nowrap;
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.18);
+}
+
+
+.image-back.show{
+  display:block;
+}
+
+
+
+/* =========================================================
+   NORMAL MODAL
+========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  z-index:1000;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,35,67,.72);
+
+  opacity:0;
+  visibility:hidden;
+
+  transition:
+    opacity .25s ease,
+    visibility .25s ease;
+}
+
+
+.modal.active{
+  opacity:1;
+  visibility:visible;
+}
+
+
+.card{
+  position:relative;
+
+  width:100%;
+  max-width:680px;
+
+  max-height:90vh;
+  overflow:auto;
+
+  padding:42px;
+
+  background:#ffffff;
+
+  border-radius:24px;
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.25);
+}
+
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
+.close{
+  position:absolute;
+
+  right:18px;
+  top:16px;
+
+  width:40px;
+  height:40px;
+
+  padding:0;
+
+  border:0;
+  border-radius:50%;
+
+  background:#f0f2f4;
+
+  color:#075a94;
+
+  font-size:23px;
+  line-height:40px;
+
+  cursor:pointer;
+}
+
+
+/* =========================================================
+   NORMAL QUESTION
+========================================================= */
+
+.label{
+  margin-bottom:12px;
+
+  color:#075a94;
+
+  font-size:13px;
+  font-weight:700;
+
+  letter-spacing:1px;
+}
+
+
+.q{
+  margin:0 0 26px;
+
+  color:#15364e;
+
+  font-size:25px;
+  line-height:1.3;
+}
+
+
+.answers{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+
+.answer{
+  width:100%;
+
+  padding:16px 18px;
+
+  border:1px solid #dddddd;
+  border-radius:12px;
+
+  background:#ffffff;
+
+  color:#253746;
+
+  text-align:left;
+
+  font-size:16px;
+  line-height:1.35;
+
+  cursor:pointer;
+}
+
+
+.answer:hover:not(:disabled){
+  border-color:#075a94;
+  background:#f5f9fc;
+}
+
+
+.answer:disabled{
+  cursor:default;
+}
+
+
+.answer.correct{
+  background:#eaf7ef;
+  border-color:#26945b;
+  color:#17683e;
+}
+
+
+.answer.wrong{
+  background:#fdecec;
+  border-color:#d74747;
+  color:#a52c2c;
+}
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+.feedback{
+  display:none;
+
+  margin-top:20px;
+
+  padding:15px 18px;
+
+  background:#f3f5f7;
+
+  color:#253746;
+
+  border-radius:10px;
+
+  font-size:15px;
+  line-height:1.5;
+}
+
+
+.feedback.show{
+  display:block;
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+.back{
+  display:none;
+
+  margin:20px 0 0 auto;
+
+  padding:13px 24px;
+
+  border:0;
+  border-radius:30px;
+
+  background:#075a94;
+
+  color:#ffffff;
+
+  font-size:15px;
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+
+.back.show{
+  display:block;
+}
+
+
+/* =========================================================
+   FINISH
+========================================================= */
+
+.finish{
+  position:fixed;
+  inset:0;
+
+  z-index:2000;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  background:#075a94;
+
+  color:#ffffff;
+
+  text-align:center;
+}
+
+
+.finish.active{
+  display:flex;
+}
+
+
+.finish h1{
+  margin:0;
+  font-size:56px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(max-width:900px){
+
+  .qfitlia-logo{
+    width:290px;
+  }
+
+  .main-title{
+    top:200px;
+
+    width:700px;
+    max-width:86vw;
+  }
+
+  .legal-image{
+    width:580px;
+    max-width:65vw;
+  }
+
+  .sanofi-logo{
+    width:170px;
+  }
+
+  .image-modal-content{
+    /*
+       Tablet optik merkez
+    */
+    transform:translate(-1vw, .5vh);
+  }
+
+  .question-image{
+    max-width:90vw;
+    max-height:86vh;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:600px){
+
+  .qfitlia-logo{
+    top:22px;
+    left:22px;
+
+    width:210px;
+    max-width:62vw;
+  }
+
+  .main-title{
+    top:155px;
+
+    width:90vw;
+    max-width:90vw;
+  }
+
+  .legal-image{
+    left:15px;
+    bottom:18px;
+
+    width:64vw;
+    max-width:64vw;
+  }
+
+  .sanofi-logo{
+    right:16px;
+    bottom:20px;
+
+    width:110px;
+    max-width:27vw;
+  }
+
+  .image-modal{
+    padding:6px;
+  }
+
+  .image-modal-content{
+    /*
+       MOBILE:
+       tam ortaya çok yakın.
+       Sadece görselin optik ağırlığı için
+       çok hafif sola.
+    */
+    transform:translate(-1vw, 0);
+  }
+
+  .question-image{
+    max-width:96vw;
+    max-height:90vh;
+  }
+
+  .image-back{
+    padding:8px 15px;
+    font-size:11px;
+  }
+
+  .card{
+    padding:48px 24px 28px;
+    border-radius:18px;
+  }
+
+  .q{
+    font-size:21px;
+  }
+
+  .answer{
+    font-size:15px;
+  }
+
+  .finish h1{
+    font-size:42px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE LANDSCAPE
+========================================================= */
+
+@media(
+  max-height:600px
+)
+and
+(
+  orientation:landscape
+){
+
+  .image-modal{
+    padding:5px;
+  }
+
+  .image-modal-content{
+    transform:translate(-1vw, 0);
+  }
+
+  .question-image{
+    max-width:94vw;
+    max-height:96vh;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     MAIN SCREEN
+===================================================== -->
+
+<div id="game">
+
+  <img
+    src="img/02.png"
+    alt="Qfitlia QR Codes and Medical Information"
+    class="legal-image"
+  >
+
+  <div id="ballArea"></div>
+
+  <img
+    src="img/qfitlia-logo.png"
+    alt="Qfitlia fitusiran"
+    class="qfitlia-logo"
+  >
+
+  <img
+    src="img/01.png"
+    alt="Select a Ball to Learn More about Qfitlia"
+    class="main-title"
+  >
+
+  <img
+    src="img/sanofi-logo.png"
+    alt="Sanofi"
+    class="sanofi-logo"
+  >
+
+</div>
+
+
+
+<!-- =====================================================
+     QUESTION 1
+===================================================== -->
+
+<div
+  id="imageModal"
+  class="image-modal"
+>
+
+  <div
+    class="image-modal-content"
+    id="imageModalContent"
+  >
+
+    <img
+      src="img/03.png"
+      id="questionImage"
+      alt="What is the indication for Qfitlia?"
+      class="question-image"
+    >
+
+
+    <div
+      id="questionOverlay"
+      class="question-overlay"
+    >
+
+      <button
+        type="button"
+        class="hotspot"
+        data-answer="0"
+        aria-label="Hemophilia A with inhibitors"
+      ></button>
+
+      <button
+        type="button"
+        class="hotspot"
+        data-answer="1"
+        aria-label="Hemophilia A without inhibitors"
+      ></button>
+
+      <button
+        type="button"
+        class="hotspot"
+        data-answer="2"
+        aria-label="Hemophilia B with inhibitors"
+      ></button>
+
+      <button
+        type="button"
+        class="hotspot"
+        data-answer="3"
+        aria-label="Hemophilia B without inhibitors"
+      ></button>
+
+      <button
+        type="button"
+        class="hotspot"
+        data-answer="4"
+        aria-label="All the above"
+      ></button>
+
+
+      <div
+        class="result-circle"
+        data-result="0"
+      ></div>
+
+      <div
+        class="result-circle"
+        data-result="1"
+      ></div>
+
+      <div
+        class="result-circle"
+        data-result="2"
+      ></div>
+
+      <div
+        class="result-circle"
+        data-result="3"
+      ></div>
+
+      <div
+        class="result-circle"
+        data-result="4"
+      ></div>
+
+
+      <button
+        id="imageBack"
+        class="image-back"
+        type="button"
+        onclick="showDetails(); return false;"
+      >
+        View Details
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     QUESTIONS 2-6
+===================================================== -->
+
+<div
+  id="modal"
+  class="modal"
+>
+
+  <div class="card">
+
+    <button
+      id="close"
+      class="close"
+      type="button"
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+    <div
+      id="label"
+      class="label"
+    ></div>
+
+    <h2
+      id="q"
+      class="q"
+    ></h2>
+
+    <div
+      id="answers"
+      class="answers"
+    ></div>
+
+    <div
+      id="feedback"
+      class="feedback"
+    ></div>
+
+    <button
+      id="back"
+      class="back"
+      type="button"
+    >
+      Back to Balls
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FINISH
+===================================================== -->
+
+<div
+  id="finish"
+  class="finish"
+>
+
+  <h1>
+    Thank you!
+  </h1>
+
+</div>
+
+
+
+<script>
+/* =========================================================
+   6 IMAGE QUESTIONS
+   questionImage -> answer -> View Details -> detailImage
+========================================================= */
+
+const questions = [
+  {questionImage:'img/03.png',detailImage:'img/04.png',correct:4,correctText:'All the above',
+   designWidth:3539,designHeight:3617,radios:[{x:355.9,y:2119.5},{x:355.9,y:2353.4},{x:355.9,y:2587.4},{x:355.9,y:2821.4},{x:355.9,y:3053.4}]},
+  {questionImage:'img/05.png',detailImage:'img/06.png',correct:2,correctText:'50 mg every two months',
+   designWidth:3399,designHeight:3679,radios:[{x:285.1,y:2377.4},{x:285.1,y:2611.6},{x:285.1,y:2845.7},{x:285.1,y:3076.1}]},
+  {questionImage:'img/07.png',detailImage:'img/08.png',correct:1,correctText:'As few as 6 injections a year',
+   designWidth:3601,designHeight:3677,radios:[{x:384.1,y:2372.7},{x:384.1,y:2606.7},{x:384.1,y:2840.8},{x:384.1,y:3072.9}]},
+  {questionImage:'img/09.png',detailImage:'img/10.png',correct:0,correctText:'Baseline AT ≥60%, target range 15-35%, with AT testing at months 1, 3, 5, 6, then once annually.',
+   designWidth:3396,designHeight:4275,radios:[{x:284.9,y:2699.8},{x:284.9,y:3069.6},{x:284.9,y:3458.3},{x:284.9,y:3839.4}]},
+  {questionImage:'img/11.png',detailImage:'img/12.png',correct:1,correctText:'Room temperature storage possible and not weight dependent.',
+   designWidth:3480,designHeight:4334,radios:[{x:293.9,y:2563.6},{x:293.9,y:2907.7},{x:293.9,y:3217.1},{x:293.9,y:3541.9}]},
+  {questionImage:'img/13.png',detailImage:'img/14.png',correct:2,correctText:'It lowers antithrombin levels to promote thrombin generation and restore hemostatic balance.',
+   designWidth:3396,designHeight:4261,radios:[{x:284.9,y:2618.7},{x:284.9,y:2933.8},{x:284.9,y:3265.8},{x:284.9,y:3575.2}]}
+];
+
+const area = document.getElementById('ballArea');
+const imageModal = document.getElementById('imageModal');
+const imageModalContent = document.getElementById('imageModalContent');
+const questionOverlay = document.getElementById('questionOverlay');
+const imageBack = document.getElementById('imageBack');
+const questionImage = document.getElementById('questionImage');
+const hotspots = [...document.querySelectorAll('.hotspot')];
+const resultCircles = [...document.querySelectorAll('.result-circle')];
+const finish = document.getElementById('finish');
+
+/* Old text modal is no longer used. */
+const oldModal = document.getElementById('modal');
+if(oldModal) oldModal.style.display = 'none';
+
+const DESIGN_WIDTH = 1240;
+const DESIGN_HEIGHT = 1240;
+const RADIO_FILL_SIZE = 42;
+
+let balls = [];
+let current = 0;
+let modalOpen = false;
+let done = 0;
+let answered = false;
+let detailMode = false;
+
+function random(min,max){
+  return Math.random() * (max-min) + min;
+}
+
+function getTopLimit(){
+  if(window.innerWidth < 600) return 245;
+  if(window.innerWidth < 900) return 330;
+  return 370;
+}
+
+function getBottomLimit(){
+  return 20;
+}
+
+function resetOverlay(){
+  hotspots.forEach((item,index)=>{
+    item.disabled = false;
+    item.style.display = 'none';
+  });
+
+  resultCircles.forEach(item=>{
+    item.classList.remove('wrong','correct');
+    item.style.display = 'none';
+  });
+
+  imageBack.classList.remove('show');
+}
+
+function updateQuestionOverlay(){
+  if(!questionImage.complete || detailMode) return;
+
+  const data = questions[current];
+  const imageRect = questionImage.getBoundingClientRect();
+  const contentRect = imageModalContent.getBoundingClientRect();
+
+  const imageLeft = imageRect.left - contentRect.left;
+  const imageTop = imageRect.top - contentRect.top;
+
+  questionOverlay.style.left = imageLeft + 'px';
+  questionOverlay.style.top = imageTop + 'px';
+  questionOverlay.style.width = imageRect.width + 'px';
+  questionOverlay.style.height = imageRect.height + 'px';
+
+  const scaleX = imageRect.width / data.designWidth;
+  const scaleY = imageRect.height / data.designHeight;
+
+  data.radios.forEach((radio,index)=>{
+    const circle = resultCircles[index];
+    const hotspot = hotspots[index];
+
+    circle.style.display = 'block';
+    circle.style.left = (radio.x * scaleX) + 'px';
+    circle.style.top = (radio.y * scaleY) + 'px';
+
+    const fillSize = 128 * Math.min(scaleX,scaleY);
+    circle.style.width = fillSize + 'px';
+    circle.style.height = fillSize + 'px';
+
+    hotspot.style.display = 'block';
+    hotspot.style.left = (Math.max(0,radio.x-170) * scaleX) + 'px';
+    hotspot.style.top = ((radio.y-105) * scaleY) + 'px';
+    hotspot.style.width = ((data.designWidth-Math.max(0,radio.x-170)-120) * scaleX) + 'px';
+    hotspot.style.height = (210 * scaleY) + 'px';
+  });
+
+  for(let i=data.radios.length;i<hotspots.length;i++){
+    hotspots[i].style.display = 'none';
+    resultCircles[i].style.display = 'none';
+  }
+
+  imageBack.style.right = (120 * scaleX) + 'px';
+  imageBack.style.bottom = (95 * scaleY) + 'px';
+}
+
+function showImageQuestion(index){
+  current = index;
+  modalOpen = true;
+  detailMode = false;
+  answered = false;
+
+  resetOverlay();
+
+  questionImage.src = questions[index].questionImage;
+  questionImage.alt = 'Qfitlia Question ' + (index + 1);
+  questionImage.style.pointerEvents = 'none';
+  questionImage.style.cursor = 'default';
+  questionImage.style.zIndex = '1';
+
+  imageModal.classList.add('active');
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(updateQuestionOverlay);
+  });
+}
+
+hotspots.forEach((hotspot,index)=>{
+  hotspot.addEventListener('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+
+    if(answered || index >= questions[current].radios.length) return;
+
+    answered = true;
+
+    hotspots.forEach(item=>item.disabled = true);
+
+    const correct = questions[current].correct;
+
+    if(index === correct){
+      resultCircles[correct].classList.add('correct');
+    }else{
+      resultCircles[index].classList.add('wrong');
+      resultCircles[correct].classList.add('correct');
+    }
+
+    imageBack.classList.add('show');
+  });
+});
+
+function showDetails(){
+  if(!answered) return;
+
+  detailMode = true;
+
+  questionImage.src = questions[current].detailImage;
+  questionImage.alt = 'Qfitlia Details ' + (current + 1);
+  questionImage.style.pointerEvents = 'auto';
+  questionImage.style.cursor = 'pointer';
+  questionImage.style.zIndex = '50';
+
+  hotspots.forEach(item=>item.style.display = 'none');
+  resultCircles.forEach(item=>item.style.display = 'none');
+  imageBack.classList.remove('show');
+}
+
+/* Inline onclick calls showDetails(); this listener only prevents bubbling. */
+imageBack.addEventListener('click',function(event){
+  event.preventDefault();
+  event.stopPropagation();
+});
+
+questionImage.addEventListener('click',function(event){
+  if(!detailMode) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  detailMode = false;
+  imageModal.classList.remove('active');
+  modalOpen = false;
+  checkFinish();
+});
+
+questionImage.addEventListener('load',function(){
+  if(!detailMode) updateQuestionOverlay();
+});
+
+/* =========================================================
+   CREATE SIX BALLS
+========================================================= */
+questions.forEach((question,index)=>{
+  const element = document.createElement('button');
+  element.type = 'button';
+  element.className = 'ball';
+  element.setAttribute('aria-label','Open question ' + (index + 1));
+
+  const size = window.innerWidth < 600
+    ? random(78,108)
+    : random(120,175);
+
+  element.style.width = size + 'px';
+  element.style.height = size + 'px';
+  area.appendChild(element);
+
+  const angle = random(0,Math.PI * 2);
+  const topLimit = getTopLimit();
+  const bottomLimit = getBottomLimit();
+
+  const maxX = Math.max(20,window.innerWidth-size-20);
+  const maxY = Math.max(topLimit+10,window.innerHeight-size-bottomLimit);
+
+  const ball = {
+    element,
+    index,
+    size,
+    x:random(15,maxX),
+    y:random(topLimit,maxY),
+    vx:Math.cos(angle)*random(.25,.55),
+    vy:Math.sin(angle)*random(.25,.55),
+    done:false
+  };
+
+  balls.push(ball);
+
+  element.addEventListener('click',function(){
+    if(ball.done) return;
+
+    ball.done = true;
+    ball.element.classList.add('completed');
+    ball.element.disabled = true;
+    done++;
+
+    showImageQuestion(index);
+  });
+});
+
+function animate(){
+  const width = area.clientWidth;
+  const height = area.clientHeight;
+  const topLimit = getTopLimit();
+  const bottomLimit = getBottomLimit();
+
+  balls.forEach(ball=>{
+    if(!modalOpen){
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+    }
+
+    if(ball.x <= 0){
+      ball.x = 0;
+      ball.vx = Math.abs(ball.vx);
+    }
+
+    if(ball.x + ball.size >= width){
+      ball.x = width - ball.size;
+      ball.vx = -Math.abs(ball.vx);
+    }
+
+    if(ball.y <= topLimit){
+      ball.y = topLimit;
+      ball.vy = Math.abs(ball.vy);
+    }
+
+    if(ball.y + ball.size >= height-bottomLimit){
+      ball.y = height-bottomLimit-ball.size;
+      ball.vy = -Math.abs(ball.vy);
+    }
+
+    ball.element.style.transform =
+      `translate3d(${ball.x}px,${ball.y}px,0)`;
+  });
+
+  requestAnimationFrame(animate);
+}
+
+function checkFinish(){
+  if(done === questions.length){
+    setTimeout(()=>{
+      finish.classList.add('active');
+    },300);
+  }
+}
+
+document.addEventListener('keydown',function(event){
+  if(event.key !== 'Escape') return;
+
+  if(detailMode){
+    detailMode = false;
+    imageModal.classList.remove('active');
+    modalOpen = false;
+    checkFinish();
+  }
+});
+
+window.addEventListener('resize',function(){
+  if(imageModal.classList.contains('active') && !detailMode){
+    requestAnimationFrame(updateQuestionOverlay);
+  }
+
+  const width = area.clientWidth;
+  const height = area.clientHeight;
+  const topLimit = getTopLimit();
+  const bottomLimit = getBottomLimit();
+
+  balls.forEach(ball=>{
+    ball.x = Math.max(0,Math.min(ball.x,width-ball.size));
+    ball.y = Math.max(
+      topLimit,
+      Math.min(ball.y,height-ball.size-bottomLimit)
+    );
+  });
+});
+
+window.addEventListener('orientationchange',function(){
+  setTimeout(()=>{
+    if(!detailMode) updateQuestionOverlay();
+  },200);
+});
+
+animate();
+</script>
+
+</body>
+</html>
